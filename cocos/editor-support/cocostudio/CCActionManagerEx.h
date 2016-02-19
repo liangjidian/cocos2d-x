@@ -81,7 +81,7 @@ public:
     *
     * @param jsonName  UI file name
     *
-    * @param actionName  action name in teh UIfile.
+    * @param actionName  action name in the UIfile.
     *
     * @return  ActionObject which named as the param name
     */
@@ -92,7 +92,7 @@ public:
     *
     * @param jsonName  UI file name
     *
-    * @param actionName  action name in teh UIfile.
+    * @param actionName  action name in the UIfile.
     *
     * @param func ui action call back
     */
@@ -103,13 +103,13 @@ public:
     *
     * @param jsonName  UI file name
     *
-    * @param actionName  action name in teh UIfile.
+    * @param actionName  action name in the UIfile.
     *
     * @return  ActionObject which named as the param name
     */
     ActionObject* stopActionByName(const char* jsonName,const char* actionName);
 
-    /*init properties with json dictionay*/
+    /*init properties with json dictionary*/
     void initWithDictionary(const char* jsonName,const rapidjson::Value &dic, Ref* root);
     void initWithBinary(const char* file, Ref* root,  CocoLoader* cocoLoader, stExpCocoNode*    pCocoNode);
 

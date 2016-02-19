@@ -40,7 +40,6 @@ THE SOFTWARE.
 #include "WidgetReader/ScrollViewReader/ScrollViewReader.h"
 #include "WidgetReader/ListViewReader/ListViewReader.h"
 #include "cocostudio/CocoLoader.h"
-#include "ui/CocosGUI.h"
 #include "tinyxml2.h"
 
 using namespace cocos2d;
@@ -493,7 +492,7 @@ Widget* WidgetPropertiesReader0250::createWidget(const rapidjson::Value& data, c
         const char* file = DICTOOL->getStringValueFromArray_json(data, "textures", i);
         std::string tp = fullPath;
         tp.append(file);
-        SpriteFrameCache::getInstance()->addSpriteFramesWithFile(tp.c_str());
+        SpriteFrameCache::getInstance()->addSpriteFramesWithFile(tp);
     }
     float fileDesignWidth = DICTOOL->getFloatValue_json(data, "designWidth");
     float fileDesignHeight = DICTOOL->getFloatValue_json(data, "designHeight");
@@ -1215,7 +1214,7 @@ Widget* WidgetPropertiesReader0300::createWidget(const rapidjson::Value& data, c
         const char* file = DICTOOL->getStringValueFromArray_json(data, "textures", i);
         std::string tp = fullPath;
         tp.append(file);
-        SpriteFrameCache::getInstance()->addSpriteFramesWithFile(tp.c_str());
+        SpriteFrameCache::getInstance()->addSpriteFramesWithFile(tp);
     }
     float fileDesignWidth = DICTOOL->getFloatValue_json(data, "designWidth");
     float fileDesignHeight = DICTOOL->getFloatValue_json(data, "designHeight");

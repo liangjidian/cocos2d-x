@@ -48,7 +48,7 @@ public:
     /** @deprecated Use getInstance() instead */
     CC_DEPRECATED_ATTRIBUTE static ArmatureDataManager *sharedArmatureDataManager() { return ArmatureDataManager::getInstance(); }
 
-    /** @deprecated Use destoryInstance() instead */
+    /** @deprecated Use destroyInstance() instead */
     CC_DEPRECATED_ATTRIBUTE static void purge() { ArmatureDataManager::destroyInstance(); };
     
     static ArmatureDataManager *getInstance();
@@ -163,7 +163,7 @@ public:
 
 
     /**
-     *    @brief    Juge whether or not need auto load sprite file
+     *    @brief    Judge whether or not need auto load sprite file
      */
     bool isAutoLoadSpriteFile();
 
@@ -177,7 +177,7 @@ protected:
     RelativeData *getRelativeData(const std::string& configFilePath);
 private:
     /**
-     *    @brief    save amature datas
+     *    @brief    save armature datas
      *  @key    std::string
      *  @value    ArmatureData *
      */

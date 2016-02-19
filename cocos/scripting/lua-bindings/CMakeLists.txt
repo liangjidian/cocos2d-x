@@ -83,7 +83,9 @@ set(lua_bindings_manual_files
     manual/CCLuaValue.cpp
     manual/Cocos2dxLuaLoader.cpp
     manual/LuaBasicConversions.cpp
+    manual/lua_module_register.cpp
     manual/tolua_fix.cpp
+    manual/CCComponentLua.cpp
     manual/cocos2d/LuaOpengl.cpp
     manual/cocos2d/LuaScriptHandlerMgr.cpp
     manual/cocos2d/lua_cocos2dx_deprecated.cpp

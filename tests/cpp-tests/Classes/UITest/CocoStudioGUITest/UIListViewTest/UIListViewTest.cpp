@@ -123,6 +123,16 @@ bool UIListViewTest_Vertical::init()
             custom_item->addChild(custom_button);
             
             listView->addChild(custom_item);
+            
+            auto clippingNode = ClippingNode::create();
+            auto sprite = Sprite::create("cocosui/clippingHead.jpg");
+            clippingNode->addChild(sprite);
+            auto stencil = Sprite::create("cocosui/clippingStencil.jpg");
+            clippingNode->setStencil(stencil);
+            auto custom_item_contentSize = custom_item->getContentSize();
+            clippingNode->setPosition(custom_item_contentSize.width/2, custom_item_contentSize.height/2);
+            clippingNode->setScale(0.5);
+            custom_item->addChild(clippingNode);
         }
         // insert custom item
         Vector<Widget*>& items = listView->getItems();
@@ -199,7 +209,10 @@ bool UIListViewTest_Vertical::init()
                 _indexLabels[2]->setString(StringUtils::format("Bottom index=%zd", listView->getIndex(bottom)));
             });
         }
-        
+
+        // Jump to bottom
+        listView->jumpToBottom();
+
         return true;
     }
     
@@ -387,7 +400,10 @@ bool UIListViewTest_Horizontal::init()
         
         // set items margin
         listView->setItemsMargin(2);
-        
+
+        // Jump to right
+        listView->jumpToRight();
+
         return true;
     }
     
@@ -424,6 +440,7 @@ bool Issue12692::init()
         Size widgetSize = _widget->getContentSize();
         
         auto label = Text::create("Issue 12692", "fonts/Marker Felt.ttf", 32);
+        label->setName("Text Title");
         label->setAnchorPoint(Vec2(0.5f, -1.0f));
         label->setPosition(Vec2(widgetSize.width / 2.0f,
                                 widgetSize.height / 2.0f + label->getContentSize().height * 1.5f));
@@ -431,6 +448,7 @@ bool Issue12692::init()
         
         
         Text* alert = Text::create("ListView in ListView enable Scissor Clipping", "fonts/Marker Felt.ttf", 20);
+        alert->setName("Text Alert");
         alert->setColor(Color3B(159, 168, 176));
         alert->setPosition(Vec2(widgetSize.width / 2.0f,
                                 widgetSize.height / 2.0f - alert->getContentSize().height * 3.075f));
@@ -489,7 +507,7 @@ bool Issue12692::init()
         }
         {
             Button* default_button = Button::create("cocosui/backtotoppressed.png", "cocosui/backtotopnormal.png");
-            default_button->setName("Title Button");
+            default_button->setName("Title Button 2");
             
             Layout* default_item = Layout::create();
             default_item->setTouchEnabled(true);
@@ -522,7 +540,6 @@ bool Issue8316::init()
         label->setPosition(Vec2(widgetSize.width / 2.0f,
                                 widgetSize.height / 2.0f + label->getContentSize().height * 1.5f));
         _uiLayer->addChild(label);
-        
         
         Text* alert = Text::create("ListView Disable Touch", "fonts/Marker Felt.ttf", 20);
         alert->setColor(Color3B(159, 168, 176));

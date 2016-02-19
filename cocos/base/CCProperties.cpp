@@ -422,7 +422,7 @@ char* Properties::readLine(char* output, int num)
     if (eof())
         return nullptr;
 
-    // little optimization: avoid uneeded dereferences
+    // little optimization: avoid unneeded dereferences
     const ssize_t dataIdx = *_dataIdx;
     int i;
 
@@ -995,7 +995,7 @@ bool Properties::getPath(const char* name, std::string* path) const
                 {
                     std::string relativePath = *dirPath;
                     relativePath.append(valueString);
-                    if (FileUtils::getInstance()->isFileExist(relativePath.c_str()))
+                    if (FileUtils::getInstance()->isFileExist(relativePath))
                     {
                         path->assign(relativePath);
                         return true;

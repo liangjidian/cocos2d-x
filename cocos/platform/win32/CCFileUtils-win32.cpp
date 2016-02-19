@@ -136,8 +136,9 @@ static void _checkPath()
 {
     if (s_resourcePath.empty())
     {
-        WCHAR *pUtf16ExePath = nullptr;
-        _get_wpgmptr(&pUtf16ExePath);
+        WCHAR utf16Path[CC_MAX_PATH] = { 0 };
+        GetModuleFileNameW(NULL, utf16Path, CC_MAX_PATH - 1);
+        WCHAR *pUtf16ExePath = &(utf16Path[0]);
 
         // We need only directory part without exe
         WCHAR *pUtf16DirEnd = wcsrchr(pUtf16ExePath, L'\\');
@@ -189,6 +190,19 @@ bool FileUtilsWin32::isDirectoryExistInternal(const std::string& dirPath) const
 std::string FileUtilsWin32::getSuitableFOpen(const std::string& filenameUtf8) const
 {
     return UTF8StringToMultiByte(filenameUtf8);
+}
+
+long FileUtilsWin32::getFileSize(const std::string &filepath)
+{
+    WIN32_FILE_ATTRIBUTE_DATA fad;
+    if (!GetFileAttributesEx(StringUtf8ToWideChar(filepath).c_str(), GetFileExInfoStandard, &fad))
+    {
+        return 0; // error condition, could call GetLastError to find out more
+    }
+    LARGE_INTEGER size;
+    size.HighPart = fad.nFileSizeHigh;
+    size.LowPart = fad.nFileSizeLow;
+    return (long)size.QuadPart;
 }
 
 bool FileUtilsWin32::isFileExistInternal(const std::string& strFilePath) const
@@ -592,8 +606,9 @@ bool FileUtilsWin32::removeDirectory(const std::string& dirPath)
         BOOL find = true;
         while (find)
         {
-            //. ..
-            if (wfd.cFileName[0] != '.')
+            // Need check string . and .. for delete folders and files begin name.
+            std::wstring fileName = wfd.cFileName;
+            if (fileName != L"." && fileName != L"..")
             {
                 std::wstring temp = wpath + wfd.cFileName;
                 if (wfd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)

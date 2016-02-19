@@ -56,6 +56,7 @@ public:
     static const unsigned short DONE = 4;
 
     MinXmlHttpRequest();
+    MinXmlHttpRequest(JSContext *cx);
     ~MinXmlHttpRequest();
     
     JS_BINDED_CLASS_GLUE(MinXmlHttpRequest);
@@ -94,7 +95,7 @@ private:
     void _setHttpRequestHeader();
     void _setHttpRequestData(const char *data, size_t len);
     void _sendRequest(JSContext *cx);
-    void _notify(JSObject * callback);
+    void _notify(JS::HandleObject callback);
     
     std::string                       _url;
     JSContext*                        _cx;
@@ -110,7 +111,7 @@ private:
     JS::Heap<JSObject*>               _ontimeoutCallback;
     JS::Heap<JSObject*>               _onreadystateCallback;
     int                               _readyState;
-    int                               _status;
+    long                              _status;
     std::string                       _statusText;
     ResponseType                      _responseType;
     unsigned long long                _timeout;
