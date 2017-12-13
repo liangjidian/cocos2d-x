@@ -23,14 +23,14 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "UIEditBoxImpl-mac.h"
-
+#include "platform/CCPlatformConfig.h"
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_MAC)
 
+#include "ui/UIEditBox/UIEditBoxImpl-mac.h"
 #include "base/CCDirector.h"
-#include "UIEditBox.h"
-#include "deprecated/CCString.h"
-#include "CCUIEditBoxMac.h"
+#include "base/ccUTF8.h"
+#include "ui/UIEditBox/UIEditBox.h"
+#include "ui/UIEditBox/Mac/CCUIEditBoxMac.h"
 
 NS_CC_BEGIN
 
@@ -75,6 +75,7 @@ void EditBoxImplMac::createNativeControl(const cocos2d::Rect &frame)
 NSFont* EditBoxImplMac::constructFont(const char *fontName, int fontSize)
 {
     NSString * fntName = [NSString stringWithUTF8String:fontName];
+    fntName = [[fntName lastPathComponent] stringByDeletingPathExtension];
     float retinaFactor = _inRetinaMode ? 2.0f : 1.0f;
     auto glview = cocos2d::Director::getInstance()->getOpenGLView();
     float scaleFactor = glview->getScaleX();
@@ -97,6 +98,9 @@ NSFont* EditBoxImplMac::constructFont(const char *fontName, int fontSize)
     else
     {
         textFont = [NSFont fontWithName:fntName size:fontSize];
+        if (textFont == nil) {
+            textFont = [NSFont systemFontOfSize:fontSize];
+        }
     }
     
     return textFont;
@@ -160,6 +164,11 @@ void EditBoxImplMac::setNativeInputFlag(EditBox::InputFlag inputFlag)
 void EditBoxImplMac::setNativeReturnType(EditBox::KeyboardReturnType returnType)
 {
     [_sysEdit setReturnType:returnType];
+}
+
+void EditBoxImplMac::setNativeTextHorizontalAlignment(cocos2d::TextHAlignment alignment)
+{
+    [_sysEdit setTextHorizontalAlignment:alignment];
 }
 
 bool EditBoxImplMac::isEditing()

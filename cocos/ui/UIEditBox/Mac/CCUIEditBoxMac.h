@@ -25,10 +25,12 @@
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
-#include "UIEditboxImpl-mac.h"
-#include "CCUITextInput.h"
+#include "ui/UIEditBox/UIEditBoxImpl-mac.h"
+#include "ui/UIEditBox/Mac/CCUITextInput.h"
 
 #pragma mark - UIEditBox mac implementation
+
+@class NSFont;
 
 @interface UIEditBoxImplMac : NSObject <NSTextFieldDelegate, NSTextViewDelegate>
 {
@@ -42,7 +44,6 @@
 
 @property (nonatomic, readonly, getter = isEditState) BOOL editState;
 @property (nonatomic, assign) void *editBox;
-@property (nonatomic, assign) NSString *text;
 @property (nonatomic, assign) NSRect frameRect;
 @property (nonatomic, assign) cocos2d::ui::EditBox::InputFlag dataInputMode;
 @property (nonatomic, assign) cocos2d::ui::EditBox::KeyboardReturnType keyboardReturnType;
@@ -55,15 +56,19 @@
 - (void)closeKeyboard;
 
 - (NSString *)getDefaultFontName;
+- (cocos2d::ui::EditBoxDelegate::EditBoxEndAction)getEndAction:(NSNotification *)notification;
 
 - (void)setInputMode:(cocos2d::ui::EditBox::InputMode)inputMode;
 - (void)setInputFlag:(cocos2d::ui::EditBox::InputFlag)inputFlag;
 - (void)setReturnType:(cocos2d::ui::EditBox::KeyboardReturnType)returnType;
-
+- (void)setTextHorizontalAlignment:(cocos2d::TextHAlignment)alignment;
 - (void)setPlaceHolder:(const char *)text;
 - (void)setVisible:(BOOL)visible;
 - (void)setTextColor:(NSColor*)color;
 - (void)setFont:(NSFont *)font;
 - (void)setPlaceholderFontColor:(NSColor*)color;
 - (void)setPlaceholderFont:(NSFont*)font;
+- (void)setText:(NSString *)text;
+- (const char*) getText;
+
 @end

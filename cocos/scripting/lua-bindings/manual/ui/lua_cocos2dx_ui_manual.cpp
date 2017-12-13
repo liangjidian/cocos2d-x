@@ -1,5 +1,5 @@
 /****************************************************************************
- Copyright (c) 2013-2014 Chukong Technologies Inc.
+ Copyright (c) 2013-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -21,21 +21,22 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-#include "lua_cocos2dx_ui_manual.hpp"
-#include "lua_cocos2dx_ui_auto.hpp"
+#include "scripting/lua-bindings/manual/ui/lua_cocos2dx_ui_manual.hpp"
+#include "scripting/lua-bindings/auto/lua_cocos2dx_ui_auto.hpp"
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID || CC_TARGET_PLATFORM == CC_PLATFORM_IOS) && !defined(CC_TARGET_OS_TVOS)
-#include "lua_cocos2dx_experimental_video_auto.hpp"
-#include "lua_cocos2dx_experimental_video_manual.hpp"
-#include "lua_cocos2dx_experimental_webview_auto.hpp"
-#include "lua_cocos2dx_experimental_webview_manual.hpp"
+#include "scripting/lua-bindings/auto/lua_cocos2dx_experimental_video_auto.hpp"
+#include "scripting/lua-bindings/manual/ui/lua_cocos2dx_experimental_video_manual.hpp"
+#include "scripting/lua-bindings/auto/lua_cocos2dx_experimental_webview_auto.hpp"
+#include "scripting/lua-bindings/manual/ui/lua_cocos2dx_experimental_webview_manual.hpp"
 #endif
-#include "cocos2d.h"
-#include "tolua_fix.h"
-#include "LuaBasicConversions.h"
-#include "LuaScriptHandlerMgr.h"
-#include "CCLuaValue.h"
+
+#include "scripting/lua-bindings/manual/tolua_fix.h"
+#include "scripting/lua-bindings/manual/LuaBasicConversions.h"
+#include "scripting/lua-bindings/manual/cocos2d/LuaScriptHandlerMgr.h"
+#include "scripting/lua-bindings/manual/CCLuaValue.h"
 #include "ui/CocosGUI.h"
-#include "CCLuaEngine.h"
+#include "scripting/lua-bindings/manual/CCLuaEngine.h"
+#include "base/CCEventListenerFocus.h"
 
 using namespace ui;
 
@@ -1173,7 +1174,7 @@ static void extendEventListenerFocusEvent(lua_State* L)
     lua_pop(L, 1);
 }
 
-int register_ui_moudle(lua_State* L)
+int register_ui_module(lua_State* L)
 {
     lua_getglobal(L, "_G");
     if (lua_istable(L,-1))//stack:...,_G,

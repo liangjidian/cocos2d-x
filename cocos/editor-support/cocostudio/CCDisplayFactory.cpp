@@ -1,5 +1,5 @@
 /****************************************************************************
-Copyright (c) 2013-2014 Chukong Technologies Inc.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -22,12 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "cocostudio/CCDisplayFactory.h"
-#include "cocostudio/CCBone.h"
-#include "cocostudio/CCArmature.h"
-#include "cocostudio/CCSkin.h"
-#include "cocostudio/CCArmatureDataManager.h"
-#include "cocostudio/CCTransformHelp.h"
+#include "editor-support/cocostudio/CCDisplayFactory.h"
+#include "editor-support/cocostudio/CCBone.h"
+#include "editor-support/cocostudio/CCArmature.h"
+#include "editor-support/cocostudio/CCSkin.h"
+#include "editor-support/cocostudio/CCArmatureDataManager.h"
+#include "editor-support/cocostudio/CCTransformHelp.h"
 
 #include "2d/CCParticleSystemQuad.h"
 
@@ -236,7 +236,7 @@ void DisplayFactory::createArmatureDisplay(Bone *bone, DecorativeDisplay *decoDi
 
     decoDisplay->setDisplay(armature);
 }
-void DisplayFactory::updateArmatureDisplay(Bone *bone, Node *display, float dt)
+void DisplayFactory::updateArmatureDisplay(Bone* /*bone*/, Node *display, float dt)
 {
     Armature *armature = (Armature *)display;
     if(armature)

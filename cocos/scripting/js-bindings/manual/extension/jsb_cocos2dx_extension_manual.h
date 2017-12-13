@@ -1,6 +1,6 @@
 /*
  * Created by James Chen on 3/11/13.
- * Copyright (c) 2013-2014 Chukong Technologies Inc.
+ * Copyright (c) 2013-2017 Chukong Technologies Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,7 +26,7 @@
 
 #include "jsapi.h"
 #include "jsfriendapi.h"
-#include "cocos/network/CCDownloader.h"
+#include "network/CCDownloader.h"
 #include "renderer/CCTexture2D.h"
 
 class __JSDownloaderDelegator : cocos2d::Ref

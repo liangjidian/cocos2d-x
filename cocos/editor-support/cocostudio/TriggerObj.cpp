@@ -1,5 +1,5 @@
 /****************************************************************************
-Copyright (c) 2013-2014 Chukong Technologies Inc.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -21,7 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-#include "TriggerObj.h"
+#include "editor-support/cocostudio/TriggerObj.h"
+#include "base/CCEventListenerCustom.h"
 
 using namespace cocos2d;
 
@@ -45,11 +46,11 @@ bool BaseTriggerCondition::detect()
     return true;
 }
 
-void BaseTriggerCondition::serialize(const rapidjson::Value &val)
+void BaseTriggerCondition::serialize(const rapidjson::Value& /*val*/)
 {
 }
     
-void BaseTriggerCondition::serialize(cocostudio::CocoLoader *cocoLoader, cocostudio::stExpCocoNode *cocoNode)
+void BaseTriggerCondition::serialize(cocostudio::CocoLoader* /*cocoLoader*/, cocostudio::stExpCocoNode* /*cocoNode*/)
 {
     
 }
@@ -76,11 +77,11 @@ void BaseTriggerAction::done()
 
 }
 
-void BaseTriggerAction::serialize(const rapidjson::Value &val)
+void BaseTriggerAction::serialize(const rapidjson::Value& /*val*/)
 {
 }
 
-void BaseTriggerAction::serialize(cocostudio::CocoLoader *cocoLoader, cocostudio::stExpCocoNode *cocoNode)
+void BaseTriggerAction::serialize(cocostudio::CocoLoader* /*cocoLoader*/, cocostudio::stExpCocoNode* /*cocoNode*/)
 {
 }
 
@@ -228,7 +229,7 @@ void TriggerObj::serialize(const rapidjson::Value &val)
         sprintf(buf, "%d", event);
         std::string custom_event_name(buf);
 
-        EventListenerCustom* listener = EventListenerCustom::create(custom_event_name, [=](EventCustom* evt){
+        EventListenerCustom* listener = EventListenerCustom::create(custom_event_name, [=](EventCustom* /*evt*/){
             if (detect())
             {
                 done();
@@ -319,7 +320,7 @@ void TriggerObj::serialize(cocostudio::CocoLoader *pCocoLoader, cocostudio::stEx
                 sprintf(buf, "%d", event);
                 std::string custom_event_name(buf);
                 
-                EventListenerCustom* listener = EventListenerCustom::create(custom_event_name, [=](EventCustom* evt){
+                EventListenerCustom* listener = EventListenerCustom::create(custom_event_name, [=](EventCustom* /*evt*/){
                     if (detect())
                     {
                         done();

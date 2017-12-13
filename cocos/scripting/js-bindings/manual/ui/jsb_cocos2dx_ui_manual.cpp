@@ -1,6 +1,6 @@
 /*
  * Created by LinWenhai on 17/11/13.
- * Copyright (c) 2013-2014 Chukong Technologies Inc.
+ * Copyright (c) 2013-2017 Chukong Technologies Inc.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -21,9 +21,9 @@
  * THE SOFTWARE.
  */
 
-#include "jsb_cocos2dx_ui_manual.h"
-#include "ScriptingCore.h"
-#include "cocos2d_specifics.hpp"
+#include "scripting/js-bindings/manual/ui/jsb_cocos2dx_ui_manual.h"
+#include "scripting/js-bindings/manual/ScriptingCore.h"
+#include "scripting/js-bindings/manual/cocos2d_specifics.hpp"
 #include "ui/CocosGUI.h"
 
 using namespace cocos2d;

@@ -1,5 +1,5 @@
 /****************************************************************************
- Copyright (c) 2015 Chukong Technologies Inc.
+ Copyright (c) 2015-2017 Chukong Technologies Inc.
  
  http://www.cocos2d-x.org
  
@@ -24,11 +24,11 @@
 
 #include "jsapi.h"
 #include "mozilla/Maybe.h"
-#include "CCComponentJS.h"
+#include "scripting/js-bindings/manual/component/CCComponentJS.h"
 #include "base/CCScriptSupport.h"
-#include "ScriptingCore.h"
-#include "cocos2d_specifics.hpp"
-#include "js_manual_conversions.h"
+#include "scripting/js-bindings/manual/ScriptingCore.h"
+#include "scripting/js-bindings/manual/cocos2d_specifics.hpp"
+#include "scripting/js-bindings/manual/js_manual_conversions.h"
 
 NS_CC_BEGIN
 
@@ -82,7 +82,8 @@ ComponentJS::ComponentJS(const std::string& scriptFileName)
 #if CC_ENABLE_GC_FOR_NATIVE_OBJECTS
             JS::RemoveObjectRoot(cx, &nproxy->obj);
 #endif // CC_ENABLE_GC_FOR_NATIVE_OBJECTS
-            jsb_remove_proxy(nproxy, jsb_get_js_proxy(nproxy->obj));
+            JS::RootedObject nobj(cx, nproxy->obj);
+            jsb_remove_proxy(nproxy, jsb_get_js_proxy(nobj));
         }
         // link the native object with the javascript object
         jsb_new_proxy(this, jsObj->ref());

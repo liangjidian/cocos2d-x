@@ -1,6 +1,6 @@
 /****************************************************************************
 Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2014 Chukong Technologies Inc.
+Copyright (c) 2013-2017 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -26,8 +26,9 @@ THE SOFTWARE.
 #include "platform/CCPlatformConfig.h"
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
 
+#include "platform/android/jni/Java_org_cocos2dx_lib_Cocos2dxEngineDataManager.h"
 #include "platform/android/jni/JniHelper.h"
-#include "CCApplication.h"
+#include "platform/CCApplication.h"
 #include "base/CCDirector.h"
 #include <android/log.h>
 #include <jni.h>
@@ -49,7 +50,7 @@ static const std::string helperClassName = "org/cocos2dx/lib/Cocos2dxHelper";
 NS_CC_BEGIN
 
 // sharedApplication pointer
-Application * Application::sm_pSharedApplication = 0;
+Application * Application::sm_pSharedApplication = nullptr;
 
 Application::Application()
 {
@@ -60,7 +61,7 @@ Application::Application()
 Application::~Application()
 {
     CCAssert(this == sm_pSharedApplication, "");
-    sm_pSharedApplication = NULL;
+    sm_pSharedApplication = nullptr;
 }
 
 int Application::run()
@@ -70,12 +71,18 @@ int Application::run()
     {
         return 0;
     }
-    
+
     return -1;
 }
 
-void Application::setAnimationInterval(float interval) {
-    JniHelper::callStaticVoidMethod("org/cocos2dx/lib/Cocos2dxRenderer", "setAnimationInterval", interval);
+void Application::setAnimationInterval(float interval)
+{
+    setAnimationInterval(interval, SetIntervalReason::BY_ENGINE);
+}
+
+void Application::setAnimationInterval(float interval, SetIntervalReason reason)
+{
+    EngineDataManager::setAnimationInterval(interval, reason);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -107,7 +114,7 @@ LanguageType Application::getCurrentLanguage()
     std::string languageName = JniHelper::callStaticStringMethod(helperClassName, "getCurrentLanguage");
     const char* pLanguageName = languageName.c_str();
     LanguageType ret = LanguageType::ENGLISH;
-    
+
     if (0 == strcmp("zh", pLanguageName))
     {
         ret = LanguageType::CHINESE;
@@ -209,4 +216,3 @@ void Application::applicationScreenSizeChanged(int newWidth, int newHeight) {
 NS_CC_END
 
 #endif // CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
-

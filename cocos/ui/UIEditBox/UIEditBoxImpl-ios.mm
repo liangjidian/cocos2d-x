@@ -23,13 +23,13 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-#include "UIEditBoxImpl-ios.h"
+#include "ui/UIEditBox/UIEditBoxImpl-ios.h"
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 
 #define kLabelZOrder  9999
 
-#include "UIEditBox.h"
+#include "ui/UIEditBox/UIEditBox.h"
 #include "base/CCDirector.h"
 #include "2d/CCLabel.h"
 #import "platform/ios/CCEAGLView-ios.h"
@@ -37,7 +37,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-#import "iOS/CCUIEditBoxIOS.h"
+#import "ui/UIEditBox/iOS/CCUIEditBoxIOS.h"
 
 #define getEditBoxImplIOS() ((cocos2d::ui::EditBoxImplIOS *)_editBox)
 
@@ -114,12 +114,18 @@ void EditBoxImplIOS::setNativeFontColor(const Color4B& color)
 
 void EditBoxImplIOS::setNativePlaceholderFont(const char* pFontName, int fontSize)
 {
-    //TODO::
+    UIFont* textFont = constructFont(pFontName, fontSize);
+    if (textFont != nil) {
+        [_systemControl setPlaceholderFont:textFont];
+    }
 }
 
 void EditBoxImplIOS::setNativePlaceholderFontColor(const Color4B& color)
 {
-    //TODO::
+    [_systemControl setPlaceholderTextColor:[UIColor colorWithRed:color.r / 255.0f
+                                                         green:color.g / 255.0f
+                                                          blue:color.b / 255.0f
+                                                         alpha:color.a / 255.f]];
 }
 
 void EditBoxImplIOS::setNativeInputMode(EditBox::InputMode inputMode)
@@ -151,6 +157,11 @@ const char* EditBoxImplIOS::getText(void)
 void EditBoxImplIOS::setNativeReturnType(EditBox::KeyboardReturnType returnType)
 {
     [_systemControl setReturnType:returnType];
+}
+
+void EditBoxImplIOS::setNativeTextHorizontalAlignment(cocos2d::TextHAlignment alignment)
+{
+    [_systemControl setTextHorizontalAlignment:alignment];
 }
 
 void EditBoxImplIOS::setNativeText(const char* pText)
@@ -209,6 +220,8 @@ UIFont* EditBoxImplIOS::constructFont(const char *fontName, int fontSize)
     float retinaFactor = eaglview.contentScaleFactor;
     NSString * fntName = [NSString stringWithUTF8String:fontName];
     
+    fntName = [[fntName lastPathComponent] stringByDeletingPathExtension];
+    
     auto glview = cocos2d::Director::getInstance()->getOpenGLView();
     float scaleFactor = glview->getScaleX();
     
@@ -225,6 +238,9 @@ UIFont* EditBoxImplIOS::constructFont(const char *fontName, int fontSize)
     if (strlen(fontName) > 0)
     {
         textFont = [UIFont fontWithName:fntName size:fontSize];
+        if (textFont == nil) {
+            textFont = [UIFont systemFontOfSize:fontSize];
+        }
     }
     else
     {

@@ -23,7 +23,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#import "CCUIMultilineTextField.h"
+#import "ui/UIEditBox/Mac/CCUIMultilineTextField.h"
 
 @interface CCUIMultilineTextField()
 @property(nonatomic, copy)NSString* placeHolder;
@@ -102,6 +102,16 @@
 - (void)ccui_setFont:(NSFont *)ccui_font
 {
     self.font = ccui_font;
+}
+
+- (NSTextAlignment)ccui_alignment
+{
+  return self.alignment;
+}
+
+- (void)ccui_setTextHorizontalAlignment:(NSTextAlignment)ccui_alignment
+{
+  self.alignment = ccui_alignment;
 }
 
 

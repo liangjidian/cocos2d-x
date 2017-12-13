@@ -1,5 +1,5 @@
 /****************************************************************************
- Copyright (c) 2013-2015 Chukong Technologies
+ Copyright (c) 2013-2017 Chukong Technologies
  
  http://www.cocos2d-x.org
  
@@ -56,7 +56,7 @@ public:
     /* override functions */
     virtual void acceptVisitor(DataVisitor &visitor) { visitor.visit(this); }
     
-    __Double* clone() const
+    virtual __Double* clone() const override
     {
         return __Double::create(_value);
     }

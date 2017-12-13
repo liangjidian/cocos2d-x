@@ -23,11 +23,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#import "CCUIEditBoxMac.h"
+#import "ui/UIEditBox/Mac/CCUIEditBoxMac.h"
 #include "base/CCDirector.h"
-#include "CCUISingleLineTextField.h"
-#include "CCUIPasswordTextField.h"
-#include "CCUIMultilineTextField.h"
+#include "ui/UIEditBox/Mac/CCUISingleLineTextField.h"
+#include "ui/UIEditBox/Mac/CCUIPasswordTextField.h"
+#include "ui/UIEditBox/Mac/CCUIMultilineTextField.h"
 
 #define getEditBoxImplMac() ((cocos2d::ui::EditBoxImplMac *)_editBox)
 
@@ -44,11 +44,10 @@
         self.frameRect = frameRect;
         
         self.editBox = editBox;
-        self.dataInputMode = cocos2d::ui::EditBox::InputFlag::INITIAL_CAPS_ALL_CHARACTERS;
+        self.dataInputMode = cocos2d::ui::EditBox::InputFlag::LOWERCASE_ALL_CHARACTERS;
         self.keyboardReturnType = cocos2d::ui::EditBox::KeyboardReturnType::DEFAULT;
         
         [self createMultiLineTextField];
-        [self.window.contentView addSubview:self.textInput];
     }
     
     return self;
@@ -64,6 +63,7 @@
 - (void)createMultiLineTextField
 {
     CCUIMultilineTextField *textView = [[[CCUIMultilineTextField alloc] initWithFrame:self.frameRect] autorelease];
+    [textView setVerticallyResizable:NO];
     self.textInput = textView;
 }
 
@@ -86,6 +86,7 @@
     textInput.ccui_placeholder = _textInput.ccui_placeholder ?: @"";
     textInput.ccui_font = _textInput.ccui_font ?: [NSFont systemFontOfSize:self.frameRect.size.height*3/2];
     textInput.ccui_maxLength = getEditBoxImplMac()->getMaxLength();
+    textInput.ccui_alignment = _textInput.ccui_alignment;
     
     [_textInput removeFromSuperview];
     [_textInput release];
@@ -96,7 +97,7 @@
     [_textInput performSelector:@selector(setBackgroundColor:) withObject:[NSColor clearColor]];
  
     if (![_textInput isKindOfClass:[NSTextView class]]) {
-        [_textInput performSelector:@selector(setBordered:) withObject:[NSNumber numberWithBool:NO]];
+        [_textInput performSelector:@selector(setBordered:) withObject:nil];
     }
     _textInput.hidden = NO;
     _textInput.wantsLayer = YES;
@@ -116,7 +117,6 @@
     frame.size.width = rect.size.width;
 
     self.textInput.frame = frame;
-    [self.window makeFirstResponder:self.window.contentView];
 }
 
 - (void)dealloc
@@ -135,11 +135,17 @@
 - (void)openKeyboard
 {
     [self.window.contentView addSubview:self.textInput];
+
     if (![self.textInput isKindOfClass:[NSTextView class]]) {
         [self.textInput becomeFirstResponder];
     }else {
         [self.window makeFirstResponder:self.textInput];
     }
+    
+    auto editbox = getEditBoxImplMac()->getEditBox();
+    auto oldPos = editbox->getPosition();
+    editbox->setPosition(oldPos + cocos2d::Vec2(10,20));
+    editbox->setPosition(oldPos);
 }
 
 - (void)closeKeyboard
@@ -167,8 +173,8 @@
 - (void)controlTextDidEndEditing:(NSNotification *)notification
 {
     _editState = NO;
-    
-    getEditBoxImplMac()->editBoxEditingDidEnd([self getText]);
+
+    getEditBoxImplMac()->editBoxEditingDidEnd([self getText], [self getEndAction:notification]);
 }
 
 - (void)setMaxLength:(int)length
@@ -189,30 +195,18 @@
     return self.textInput.ccui_font.fontName ?: @"";
 }
 
-- (void) hackingCodeForRefreshPosition
-{
-    [self.window.contentView addSubview:self.textInput];
-    if (![self.textInput isKindOfClass:[NSTextView class]]) {
-        [self.textInput becomeFirstResponder];
-    }else {
-        [self.window makeFirstResponder:self.textInput];
-    }
-}
-
 - (void)setInputMode:(cocos2d::ui::EditBox::InputMode)inputMode
 {
     //multiline input
     if (inputMode == cocos2d::ui::EditBox::InputMode::ANY) {
         if (![self.textInput isKindOfClass:[NSTextView class]]) {
             [self createMultiLineTextField];
-            [self hackingCodeForRefreshPosition];
         }
     }
     else {
         if (self.dataInputMode != cocos2d::ui::EditBox::InputFlag::PASSWORD) {
             if (![self.textInput isKindOfClass:[NSTextField class]]) {
                 [self createSingleLineTextField];
-                [self hackingCodeForRefreshPosition];
             }
         }
     }
@@ -251,6 +245,9 @@
         case cocos2d::ui::EditBox::InputFlag::SENSITIVE:
             CCLOG("SENSITIVE not implemented");
             break;
+        case cocos2d::ui::EditBox::InputFlag::LOWERCASE_ALL_CHARACTERS:
+            CCLOG("LOWERCASE_ALL_CHARACTERS not implemented");
+            break;
         default:
             break;
     }
@@ -259,6 +256,14 @@
 - (void)setReturnType:(cocos2d::ui::EditBox::KeyboardReturnType)returnType
 {
     CCLOG("setReturnType not implemented");
+}
+
+- (void)setTextHorizontalAlignment:(cocos2d::TextHAlignment)alignment
+{
+    // swizzle center & right, for some reason they're backwards on !TARGET_OS_IPHONE
+    if (alignment == cocos2d::TextHAlignment::CENTER) alignment = cocos2d::TextHAlignment::RIGHT;
+    else if (alignment == cocos2d::TextHAlignment::RIGHT) alignment = cocos2d::TextHAlignment::CENTER;
+    self.textInput.ccui_alignment = static_cast<NSTextAlignment>(alignment);
 }
 
 - (void)setPlaceHolder:(const char *)text
@@ -292,12 +297,13 @@
 {
     self.textInput.ccui_placeholderFont = font;
 }
+
 - (void)setText:(NSString *)text
 {
     self.textInput.ccui_text = text;
 }
 
-- (BOOL)textShouldBeginEditing:(NSText *)textObject;        // YES means do it
+- (BOOL)textShouldBeginEditing:(NSText *)textObject        // YES means do it
 {
     _editState = YES;
     
@@ -308,8 +314,22 @@
 - (void)textDidEndEditing:(NSNotification *)notification
 {
     _editState = NO;
-    
-    getEditBoxImplMac()->editBoxEditingDidEnd([self getText]);
+
+    getEditBoxImplMac()->editBoxEditingDidEnd([self getText], [self getEndAction:notification]);
+}
+
+- (cocos2d::ui::EditBoxDelegate::EditBoxEndAction)getEndAction:(NSNotification *)notification
+{
+    auto type = cocos2d::ui::EditBoxDelegate::EditBoxEndAction::UNKNOWN;
+    NSUInteger reasonForEnding = [[[notification userInfo] objectForKey:@"NSTextMovement"] unsignedIntValue];
+    if (reasonForEnding == NSTabTextMovement) {
+        type = cocos2d::ui::EditBoxDelegate::EditBoxEndAction::TAB_TO_NEXT;
+    } else if (reasonForEnding == NSBacktabTextMovement) {
+        type = cocos2d::ui::EditBoxDelegate::EditBoxEndAction::TAB_TO_PREVIOUS;
+    } else if (reasonForEnding == NSReturnTextMovement) {
+        type = cocos2d::ui::EditBoxDelegate::EditBoxEndAction::RETURN;
+    }
+    return type;
 }
 
 - (void)textDidChange:(NSNotification *)notification

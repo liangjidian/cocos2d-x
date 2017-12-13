@@ -22,22 +22,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#include "CCActionTimelineCache.h"
-#include "CSLoader.h"
-#include "CCFrame.h"
-#include "CCTimeLine.h"
-#include "CCActionTimeline.h"
+#include "editor-support/cocostudio/ActionTimeline/CCActionTimelineCache.h"
+#include "editor-support/cocostudio/ActionTimeline/CSLoader.h"
+#include "editor-support/cocostudio/ActionTimeline/CCFrame.h"
+#include "editor-support/cocostudio/ActionTimeline/CCTimeLine.h"
+#include "editor-support/cocostudio/ActionTimeline/CCActionTimeline.h"
 #include "platform/CCFileUtils.h"
 #include "2d/CCSpriteFrameCache.h"
 #include "2d/CCSpriteFrame.h"
 
-#include "cocostudio/CSParseBinary_generated.h"
+#include "editor-support/cocostudio/CSParseBinary_generated.h"
 
 #include "tinyxml2.h"
 #include "flatbuffers/flatbuffers.h"
 #include "flatbuffers/util.h"
 
-#include "cocostudio/FlatBuffersSerialize.h"
+#include "editor-support/cocostudio/FlatBuffersSerialize.h"
 
 #include <fstream>
 
@@ -59,7 +59,6 @@ static const char* Property_AnchorPoint     = "AnchorPoint";
 static const char* Property_ZOrder          = "ZOrder";
 static const char* Property_ActionValue     = "ActionValue";
 static const char* Property_BlendValue      = "BlendFunc";
-static const char* Property_PlayableAct     = "PlayableAct";
 
 static const char* ACTION           = "action";
 static const char* DURATION         = "duration";
@@ -76,7 +75,6 @@ static const char* START_FRAME      = "startFrame";
 static const char* X                = "x";
 static const char* Y                = "y";
 static const char* ROTATION         = "rotation";
-static const char* ALPHA            = "alpha";
 static const char* RED              = "red";
 static const char* GREEN            = "green";
 static const char* BLUE             = "blue";
@@ -506,7 +504,7 @@ ActionTimeline* ActionTimelineCache::createActionWithDataBuffer(const cocos2d::D
         Timeline* timeline = loadTimelineWithFlatBuffers(timelineFlatBuf);
         if (timeline)
         {
-            properTimelineMap.insert(std::make_pair(timelineFlatBuf->property()->c_str(), timeline));
+            properTimelineMap.emplace(timelineFlatBuf->property()->c_str(), timeline);
         }
     }
 
@@ -642,7 +640,7 @@ Frame* ActionTimelineCache::loadPositionFrameWithFlatBuffers(const flatbuffers::
 {
     PositionFrame* frame = PositionFrame::create();
     
-    auto f_position = flatbuffers->postion();
+    auto f_position = flatbuffers->position();
     Vec2 position(f_position->x(), f_position->y());
     frame->setPosition(position);
     
@@ -966,12 +964,10 @@ ActionTimeline* ActionTimelineCache::createActionWithFlatBuffersForSimulator(con
     fbs->_isSimulator = true;
     auto builder = fbs->createFlatBuffersWithXMLFileForSimulator(fileName);
     
-    ActionTimeline* action = ActionTimeline::create();
-    
     auto csparsebinary = GetCSParseBinary(builder->GetBufferPointer());
     auto nodeAction = csparsebinary->action();
     
-    action = ActionTimeline::create();
+    auto action = ActionTimeline::create();
     
     int duration = nodeAction->duration();
     action->setDuration(duration);
@@ -1000,7 +996,7 @@ ActionTimeline* ActionTimelineCache::createActionWithFlatBuffersForSimulator(con
         Timeline* timeline = loadTimelineWithFlatBuffers(timelineFlatBuf);
         if (timeline)
         {
-            properTimelineMap.insert(std::make_pair(timelineFlatBuf->property()->c_str(), timeline));
+            properTimelineMap.emplace(timelineFlatBuf->property()->c_str(), timeline);
         }
     }
 
